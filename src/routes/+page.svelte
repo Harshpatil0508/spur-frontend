@@ -114,19 +114,35 @@
   </div>
 
   <div id="chat" class="messages">
-    {#each messages as msg}
+  {#each messages as msg}
+    <div class="msg-row {msg.sender}">
+      
+      {#if msg.sender === 'ai'}
+        <div class="avatar ai-avatar">🤖</div>
+      {/if}
+
       <div class="msg {msg.sender}">
         <div>{msg.text}</div>
         <small class="time">
           {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString() : ''}
         </small>
       </div>
-    {/each}
 
-    {#if loading}
+      {#if msg.sender === 'user'}
+        <div class="avatar user-avatar">🧑‍💻</div>
+      {/if}
+
+    </div>
+  {/each}
+
+  {#if loading}
+    <div class="msg-row ai">
+      <div class="avatar ai-avatar">🤖</div>
       <div class="msg ai typing">Agent is typing…</div>
-    {/if}
-  </div>
+    </div>
+  {/if}
+</div>
+
 
   <div class="input-container">
     <input
@@ -240,4 +256,39 @@
     margin-top: 4px;
     text-align: right;
   }
+
+  .msg-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.msg-row.user {
+  justify-content: flex-end;
+}
+
+.msg-row.ai {
+  justify-content: flex-start;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: #eee;
+  flex-shrink: 0;
+}
+
+.ai-avatar {
+  background: #e8f0ff;
+}
+
+.user-avatar {
+  background: #d9fdd3;
+}
+
 </style>
