@@ -1,0 +1,93 @@
+/* app.css */
+
+/* General Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Chat container */
+.chat {
+  max-width: 600px;
+  height: 80vh;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Messages area */
+.messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  scroll-behavior: smooth;
+  background-color: #f9f9f9;
+}
+
+/* Individual message */
+.msg {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  max-width: 75%;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+/* User messages */
+.user {
+  background-color: #dcf8c6;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+/* AI messages */
+.ai {
+  background-color: #f1f1f1;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+/* Typing indicator */
+.msg.ai.typing {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Input box */
+input {
+  border: none;
+  border-top: 1px solid #ddd;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  width: 100%;
+  outline: none;
+  border-radius: 0 0 10px 10px;
+}
+
+input:focus {
+  border-top-color: #aaa;
+}
+
+/* Scrollbar styling */
+.messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 4px;
+}
+
+.messages::-webkit-scrollbar-track {
+  background-color: transparent;
+}
