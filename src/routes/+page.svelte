@@ -80,13 +80,11 @@
 	}
 </script>
 
-
-
 <div class="chat">
-<div class="header">
-	<h3>Support Chat</h3>
-	<button class="clear" on:click={clearChat}>Clear</button>
-</div>
+	<div class="header">
+		<h3>Support Chat</h3>
+		<button class="clear" on:click={clearChat}>Clear</button>
+	</div>
 	<div id="chat" class="messages">
 		{#each messages as msg}
 			<div class="msg {msg.sender}">
