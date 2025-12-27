@@ -14,6 +14,9 @@
 
   // Load chat history safely
   onMount(async () => {
+
+    console.log("API BASE URL:", import.meta.env.PUBLIC_API_BASE_URL);
+
     sessionId = localStorage.getItem('sessionId');
     if (!sessionId) return;
 
