@@ -1,38 +1,109 @@
-# sv
+# Spur Chat Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A clean and responsive Svelte-based chat UI for an AI-powered customer support system.
+This frontend connects to the Spur Chat Backend and provides a real-time, session-based chat experience similar to modern support widgets.
 
-## Creating a project
+Built with simplicity, clarity, and reliability in mind.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
 
-```sh
-# create a new project in the current directory
-npx sv create
+- Real-time chat interface
+- Session-based conversation persistence
+- Automatic chat history loading
+- Typing indicator for AI responses
+- Clear chat functionality
+- Smooth auto-scroll behavior
+- Mobile-friendly and responsive UI
+- Minimal, classic support-chat design
 
-# create a new project in my-app
-npx sv create my-app
+## Tech Stack
+
+- Svelte
+- TypeScript
+- Fetch API
+
+
+## Project Overview
+
+### The frontend:
+
+- Stores sessionId in localStorage
+- Restores chat history on page reload
+- Communicates with backend REST APIs
+- Displays user and AI messages with avatars
+- Handles loading, error, and empty states gracefully
+
+### Clone the Repository
+```
+git clone https://github.com/Harshpatil0508/spur-frontend.git
+cd spur-frontend
+```
+### Environment Configuration
+
+- Create a .env file in the project root:
+```
+PUBLIC_API_BASE_URL=https://your-backend-url
 ```
 
-## Developing
+- Example:
+```
+PUBLIC_API_BASE_URL=http://localhost:3001
+```
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Installation
 
-```sh
+### Install dependencies:
+```
+npm install
+```
+
+## Running the App
+### Development
+```
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+## The app will be available at:
+```
+http://localhost:5173
+```
 
-To create a production version of your app:
-
-```sh
+## Production Build
+```
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Chat Flow
+
+- User types a message and presses Enter or clicks Send
+- Message is sent to backend /chat/message
+- Backend returns AI reply and sessionId
+- sessionId is stored in localStorage
+- On reload, chat history is fetched from /chat/history/:sessionId
+
+## API Integration
+### Send Message
+
+- POST /chat/message
+
+
+- Request body:
+```
+{
+  "message": "Hello",
+  "sessionId": "session-id"
+}
+```
+
+### Fetch Chat History
+
+- GET /chat/history/:sessionId
+
+### UI Behavior
+- User messages appear on the right
+- AI messages appear on the left
+- Avatars indicate sender
+- Typing indicator shows while waiting for AI response
+- Timestamps displayed per message
+- Clear button resets session and chat state
