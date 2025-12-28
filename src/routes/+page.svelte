@@ -12,25 +12,19 @@
   let loading = false;
   let sessionId: string | null = null;
 
-  // Load chat history safely
+  const API_BASE = import.meta.env.PUBLIC_API_BASE_URL;
+
   onMount(async () => {
-
-    console.log("API BASE URL:", import.meta.env.PUBLIC_API_BASE_URL);
-
     sessionId = localStorage.getItem('sessionId');
     if (!sessionId) return;
 
     try {
-      const res = await fetch(
-        `${import.meta.env.PUBLIC_API_BASE_URL}/chat/history/${sessionId}`
-      );
-
+      const res = await fetch(`${API_BASE}/chat/history/${sessionId}`);
       if (!res.ok) {
         localStorage.removeItem('sessionId');
         sessionId = null;
         return;
       }
-
       const data = await res.json();
       messages = data.messages || [];
       scrollToBottom();
@@ -44,7 +38,6 @@
 
     const userText = input.trim();
 
-    // Optimistic UI update
     messages = [
       ...messages,
       { sender: 'user', text: userText, createdAt: new Date().toISOString() }
@@ -54,18 +47,14 @@
     loading = true;
 
     try {
-      // Only send sessionId if valid
       const payload: any = { message: userText };
       if (sessionId) payload.sessionId = sessionId;
 
-      const res = await fetch(
-        `${import.meta.env.PUBLIC_API_BASE_URL}/chat/message`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }
-      );
+      const res = await fetch(`${API_BASE}/chat/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
       const data = await res.json();
 
@@ -83,10 +72,7 @@
         }
       ];
     } catch {
-      messages = [
-        ...messages,
-        { sender: 'ai', text: 'Something went wrong.' }
-      ];
+      messages = [...messages, { sender: 'ai', text: 'Something went wrong.' }];
     } finally {
       loading = false;
       scrollToBottom();
@@ -114,35 +100,32 @@
   </div>
 
   <div id="chat" class="messages">
-  {#each messages as msg}
-    <div class="msg-row {msg.sender}">
-      
-      {#if msg.sender === 'ai'}
-        <div class="avatar ai-avatar">🤖</div>
-      {/if}
+    {#each messages as msg}
+      <div class="msg-row {msg.sender}">
+        {#if msg.sender === 'ai'}
+          <div class="avatar ai-avatar">🤖</div>
+        {/if}
 
-      <div class="msg {msg.sender}">
-        <div>{msg.text}</div>
-        <small class="time">
-          {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString() : ''}
-        </small>
+        <div class="msg-bubble {msg.sender}">
+          <div>{msg.text}</div>
+          <small class="time">
+            {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString() : ''}
+          </small>
+        </div>
+
+        {#if msg.sender === 'user'}
+          <div class="avatar user-avatar">🧑‍💻</div>
+        {/if}
       </div>
+    {/each}
 
-      {#if msg.sender === 'user'}
-        <div class="avatar user-avatar">🧑‍💻</div>
-      {/if}
-
-    </div>
-  {/each}
-
-  {#if loading}
-    <div class="msg-row ai">
-      <div class="avatar ai-avatar">🤖</div>
-      <div class="msg ai typing">Agent is typing…</div>
-    </div>
-  {/if}
-</div>
-
+    {#if loading}
+      <div class="msg-row ai">
+        <div class="avatar ai-avatar">🤖</div>
+        <div class="msg-bubble ai typing">Agent is typing…</div>
+      </div>
+    {/if}
+  </div>
 
   <div class="input-container">
     <input
@@ -155,6 +138,19 @@
 </div>
 
 <style>
+  .chat {
+    max-width: 600px;
+    margin: 2rem auto;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9;
+    font-family: system-ui, sans-serif;
+  }
+
   .header {
     display: flex;
     justify-content: space-between;
@@ -168,26 +164,9 @@
     background: transparent;
     border: 1px solid white;
     color: white;
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 12px;
     cursor: pointer;
-  }
-
-  .clear:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  .chat {
-    max-width: 600px;
-    margin: 2rem auto;
-    height: 80vh;
-    display: flex;
-    flex-direction: column;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f9f9f9;
   }
 
   .messages {
@@ -196,28 +175,58 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .msg-row {
+    display: flex;
+    align-items: flex-end;
     gap: 0.5rem;
   }
 
-  .msg {
+  .msg-row.user {
+    justify-content: flex-end;
+  }
+
+  .msg-row.ai {
+    justify-content: flex-start;
+  }
+
+  .msg-bubble {
+    max-width: 70%;
     padding: 0.75rem 1rem;
     border-radius: 18px;
-    max-width: 70%;
-    word-wrap: break-word;
     line-height: 1.4;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
-  .user {
+  .msg-bubble.user {
     background: #dcf8c6;
-    align-self: flex-end;
     border-bottom-right-radius: 4px;
   }
 
-  .ai {
-    background: #fff;
-    align-self: flex-start;
+  .msg-bubble.ai {
+    background: #ffffff;
     border-bottom-left-radius: 4px;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .ai-avatar {
+    background: #e8f0ff;
+  }
+
+  .user-avatar {
+    background: #d9fdd3;
   }
 
   .input-container {
@@ -233,7 +242,6 @@
     border-radius: 20px;
     border: 1px solid #ccc;
     outline: none;
-    font-size: 1rem;
   }
 
   button {
@@ -242,6 +250,7 @@
     background: #4a90e2;
     color: white;
     font-weight: bold;
+    border: none;
     cursor: pointer;
   }
 
@@ -251,44 +260,10 @@
   }
 
   .time {
+    display: block;
     font-size: 0.7rem;
     color: #777;
     margin-top: 4px;
     text-align: right;
   }
-
-  .msg-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
-}
-
-.msg-row.user {
-  justify-content: flex-end;
-}
-
-.msg-row.ai {
-  justify-content: flex-start;
-}
-
-.avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  background: #eee;
-  flex-shrink: 0;
-}
-
-.ai-avatar {
-  background: #e8f0ff;
-}
-
-.user-avatar {
-  background: #d9fdd3;
-}
-
 </style>
